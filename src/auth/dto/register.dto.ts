@@ -1,6 +1,6 @@
 import { IsOptional, IsString, MinLength } from "class-validator";
 
-export class CreateUserDto {
+export class RegisterDto {
     @IsString()
     name: string;
 
