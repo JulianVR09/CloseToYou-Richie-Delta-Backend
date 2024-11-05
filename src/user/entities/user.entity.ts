@@ -10,16 +10,13 @@ export class User {
   name: string;
 
   @Column()
-  lastName: string;
+  lastName?: string;
 
   @Column()
   email: string;
 
   @Column()
   password: string;
-
-  @Column()
-  phone: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   role: Role;
