@@ -5,10 +5,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api/v1')
+
   app.enableCors();
 
   const config = new DocumentBuilder()
-    .setTitle('VortexStream API')
+    .setTitle('CloseToYou')
     .setDescription('API documentation for the VortexStream project')
     .setVersion('1.0')
     .addBearerAuth()

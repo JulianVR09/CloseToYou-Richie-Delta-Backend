@@ -9,7 +9,7 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post('singup')
   async register(@Body() registerDto: RegisterDto){
     return await this.authService.registerUser(registerDto);
   }
