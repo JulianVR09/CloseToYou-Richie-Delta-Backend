@@ -1,5 +1,6 @@
 import { Role } from 'src/common/enum/Roles.enum';
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Contact } from 'src/contacts/entities/contact.entity';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -9,7 +10,7 @@ export class User {
   @Column()
   name: string;
 
-  @Column()
+  @Column({nullable: true})
   lastName?: string;
 
   @Column()
@@ -26,4 +27,7 @@ export class User {
 
   @UpdateDateColumn({ select: false })
   updatedAt: Date;
+
+  @OneToMany(() => Contact, (contact) => contact.user)
+    contacts: Contact[]
 }

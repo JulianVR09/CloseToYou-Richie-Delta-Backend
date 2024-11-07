@@ -10,54 +10,53 @@ import { ActiveUserInterface } from 'src/common/interface/activeUSer.interface';
 export class ContactsService {
   constructor(@InjectRepository(Contact) private readonly contactRepository: Repository<Contact>){}
 
-  private validateOwner(userId: string, user: ActiveUserInterface){
-    if(userId !== user.id){
-      throw new UnauthorizedException('You are not authorized to perform this action');
-    }
+  async createContact(createContactDto: CreateContactDto, user: ActiveUserInterface): Promise<Contact> {
+    
+    const contact = this.contactRepository.create({
+      ...createContactDto,
+      user: { id: user.id }
+    })
+
+    return await this.contactRepository.save(contact);
   }
 
-  async create(createContactDto: CreateContactDto, user: ActiveUserInterface) {
-    this.validateOwner(createContactDto.userId, user)
-
-    return await this.contactRepository.save(createContactDto);
+  async createContactArray(contacts: CreateContactDto[], user: ActiveUserInterface): Promise<Contact[]> {
+    const createdContacts = await Promise.all(
+      contacts.map((contactDto) => this.createContact(contactDto, user)),
+    )
+    return createdContacts
   }
 
   async findAll(user: ActiveUserInterface) {
-    return await this.contactRepository.find({where: {userId: user.id}});
+    return await this.contactRepository.find({where: {user: { id: user.id }}});
   }
 
   async findOne(id: string, user: ActiveUserInterface) {
-    const contact = await this.contactRepository.findOne({ where : {userId: id}});
+    const contact = await this.contactRepository.findOne({ where : {user: {id: user.id}}});
 
     if (!contact) {
       throw new NotFoundException(`Contact with id ${id} not found`);
     }
-
-    this.validateOwner(contact.userId, user);
 
     return contact;
   }
 
   async update(id: string, updateContactDto: UpdateContactDto, user: ActiveUserInterface) {
-    const contact = await this.contactRepository.findOne({ where: {userId: id}});
+    const contact = await this.contactRepository.findOne({ where: {user: {id: user.id}}});
 
     if (!contact) {
       throw new NotFoundException(`Contact with id ${id} not found`);
     }
-
-    this.validateOwner(contact.userId, user);
 
     return await this.contactRepository.update(id, updateContactDto);
   }
 
   async remove(id: string, user: ActiveUserInterface) {
-    const contact = await this.contactRepository.findOne({ where: {userId: id}});
+    const contact = await this.contactRepository.findOne({ where: {user: {id: user.id}}});
 
     if (!contact) {
       throw new NotFoundException(`Contact with id ${id} not found`);
     }
-
-    this.validateOwner(contact.userId, user);
 
     await this.contactRepository.delete(id);
   }
